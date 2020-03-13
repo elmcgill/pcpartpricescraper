@@ -8,8 +8,14 @@ router.get('/', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
+    const input = {
+        email: req.body.email,
+        link: req.body.link
+    };
+
     res.status(201).json({
-        message: 'Handling POST requests to /input'
+        message: 'Handling POST requests to /input',
+        receivedInput: input
     });
 });
 

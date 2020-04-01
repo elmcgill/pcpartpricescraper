@@ -1,24 +1,15 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const app = express();
 const port = 5000;
 
 const inputRoutes = require('./api/routes/input');
 const partsRoutes = require('./api/routes/parts');
 
+app.use(cors());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
-
-app.use((req, res, next) => {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Acces-Control-Allow-Headers', '*');
-    if(req.method === 'OPTIONS'){
-        res.header('Access-Control-Allow-Methods', 'GET, POST');
-        return res.status(200).json({});
-    }
-
-    next();
-});
 
 app.use('/input', inputRoutes);
 app.use('/parts', partsRoutes);

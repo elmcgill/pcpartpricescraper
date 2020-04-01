@@ -3,28 +3,30 @@ import './parts.css';
 
 class Parts extends Component{
 
-    constructor(){
-        super();
+    constructor(props){
+        super(props);
         this.state={
             parts: []
         }
     }
 
-    componentDidMount() {
-        fetch('/api/parts')
+    //componentDidMount() {
+        //fetch(`http://localhost:5000/parts/`)
+          //.then(res => res.json())
+          //.then(parts => this.setState({parts}, () => console.log('Parts fetched...', parts)));
+      //}
+
+    getParts(){
+        fetch(`http://localhost:5000/parts/`)
           .then(res => res.json())
-          .then(parts => this.setState({parts}, () => console.log('Parts fetched...', parts)));
-      }
+          .then(parts => console.log('Parts fetched...', parts));
+    }
 
     render(){
         return(
             <div>
                 <h2>Parts List</h2>
-                <ul>
-                    {this.state.parts.map(part =>
-                        <li key={part.id}>{part.type} : ${part.cost}</li>
-                    )}
-                </ul>
+                <button onClick={this.getParts}>Get Parts</button>
             </div>
         );
     }

@@ -1,38 +1,18 @@
 const express = require('express');
+const fs = require('fs');
+const controller = require('../controllers/inputController');
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-    res.status(200).json({
-        message: 'Handling GET requests to /input'
-    });
-});
-
 router.post('/', (req, res, next) => {
-    const input = {
-        email: req.body.email,
-        link: req.body.link
-    };
+
+    const listInput = JSON.stringify(req.body);
+    fs.writeFile('sitelist.json', listInput, (err)=>{
+        if(err) throw err;
+    });
 
     res.status(201).json({
-        message: 'Handling POST requests to /input',
-        receivedInput: input
+        receivedInput: req.body
     });
-});
-
-router.get('/:userID', (req, res, next) => {
-    const id = req.params.userID;
-    if(id === 'special'){
-        res.status(200).json({
-            message:'This has zero purpose other than testing',
-            id: id
-        });
-    }
-    else{
-        res.status(200).json({
-            message:'This also is working',
-            id: id
-        });
-    }
 });
 
 module.exports = router;

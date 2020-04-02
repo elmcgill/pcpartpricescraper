@@ -5,7 +5,6 @@ class Form extends Component{
     constructor(props){
         super(props);
         this.state = {
-            id: this.props.id,
             amazonCPU: '',
             neweggCPU: '',
             amazonMOBO: '',
@@ -23,7 +22,8 @@ class Form extends Component{
             amazonCooler: '',
             neweggCooler: '',
             amazonFans: '',
-            neweggFans: ''
+            neweggFans: '',
+            partslist: this.props.partslist
         }
     }
 
@@ -32,7 +32,6 @@ class Form extends Component{
         event.preventDefault();
         console.log('submit happened');
         const sendData = {
-            id: this.props.id,
             amazon:[
                 {cpu: this.state.amazonCPU},
                 {mobo: this.state.amazonMOBO},
@@ -57,6 +56,7 @@ class Form extends Component{
             ]
         }
 
+        /*
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -66,6 +66,7 @@ class Form extends Component{
             .then(response => response.json())
             .then(data => console.log(data));
         console.log(sendData);
+        */
 
         this.setState({
             amazonCPU: '',
@@ -85,7 +86,8 @@ class Form extends Component{
             amazonCooler: '',
             neweggCooler: '',
             amazonFans: '',
-            neweggFans: ''
+            neweggFans: '',
+            partslist: sendData
         });
         document.getElementById('partLinks').reset();
     }

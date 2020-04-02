@@ -1,8 +1,6 @@
 const fs = require('fs');
 const puppeteer = require('puppeteer-extra');
-const axios = require('axios');
-const cheerio = require('cheerio');
-const lineReader = require('line-reader');
+const scraper = require('./setupScraper');
 
 puppeteer.use(require('puppeteer-extra-plugin-stealth')());
 
@@ -62,13 +60,11 @@ async function constructPartlist(){
             let n = newegg[i];
             let nkey = Object.keys(n);
             let nlink = n[nkey];
-            //let loadtheegg = await loadNewegg(nlink, nkey);
-            //let title = await getProductTitle(`${nkey}.html`);
-            //product.title = title;
+            let title = await getProductTitle();
+            product.title = title;
             let amazonPrice = await getPriceAmazon(alink);
             product.amazonprice = amazonPrice;
             let neweggPrice = await checkPriceNewegg(nlink);
-            console.log(neweggPrice);
             product.neweggprice = neweggPrice;
             productList.push(product);
             console.log(product);
@@ -78,8 +74,7 @@ async function constructPartlist(){
 }
 
 async function getPriceAmazon(link){
-    const browser = await puppeteer.launch();
-    const page = await browser.newPage();
+    const page = await scraper.init();
     var text;
     
     await page.goto(link);
@@ -90,16 +85,47 @@ async function getPriceAmazon(link){
         text = 'NA';
     }
     
-    browser.close();
+    await scraper.stopBrowsing();
 
-    return(text);
+    console.log('returning text..');
 }
 
 
 async function checkPriceNewegg(link){
+    const page = await scraper.init();
+    var text;
     
+    await page.goto(link);
+    if(await page.$("#landingpage-price > div > div > ul > li.price-current") !== null){
+        const element = await page.$("#landingpage-price > div > div > ul > li.price-current");
+        text = await page.evaluate(element => element.textContent, element);
+    } else {
+        text = 'NA';
+    }
+    
+    console.log('closing browser...');
+    await scraper.stopBrowsing();
+
+    return(text);
 }
 
-async function getProductTitle(name){
+async function getProductTitle(link){
+    const page = await scraper.init();
+    var text;
     
+    await page.goto(link);
+    if(await page.$("#productTitle") !== null){
+        const element = await page.$("#productTitle");
+        text = await page.evaluate(element => element.textContent, element);
+    } else {
+        text = 'NA';
+    }
+    
+    console.log('closing browser...');
+    await scraper.stopBrowsing();
+
+    console.log(text.trim());
+    return(text.trim());
 }
+
+getProductTitle('https://www.amazon.com/ASRock-B450M-Promontory-CrossFireX-Motherboard/dp/B07MV9BMNY');

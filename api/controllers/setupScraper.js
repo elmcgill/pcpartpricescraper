@@ -42,15 +42,14 @@ module.exports = {
             '--ignore-certificate-errors',
             '--ignore-certificate-errors-spki-list',
             '--user-agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_12_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3312.0 Safari/537.36"',
-            //`--proxy-server=${proxy.ip}:${proxy.port}`
+            `--proxy-server=http=${proxy.ip}:${proxy.port}`
         ];
 
         const options = {
             args,
             headless: true,
             ignoreHTTPSErrors: true,
-            userDataDir: './tmp',
-            chrome: true 
+            userDataDir: './tmp', 
         }
 
         browser = await puppeteer.launch(options);

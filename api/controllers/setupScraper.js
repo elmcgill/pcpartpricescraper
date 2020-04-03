@@ -33,7 +33,7 @@ module.exports = {
 
     init: async function(){
         const proxy = await getProxy();
-        console.log(proxy);
+        //console.log(proxy);
         const args = [
             '--no-sandbox',
             '--disable-setuid-sandbox',

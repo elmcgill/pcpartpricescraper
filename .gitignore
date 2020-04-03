@@ -2,7 +2,7 @@
 
 # compiled output
 /dist
-/tmp
+controller/tmp
 /out-tsc
 
 # Runtime data

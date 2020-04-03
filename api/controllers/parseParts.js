@@ -3,7 +3,6 @@ const scraper = require('./setupScraper');
 
 let amazon = [];
 let newegg = [];
-let productList = [];
 
 function getData(){
     return new Promise((resolve, reject) => {
@@ -47,12 +46,14 @@ async function constructPartlist(){
     
         const deconAmazon = await deconstructAmazon();
         const deconNewegg = await deconstructNewegg();
+        let productList = [];
 
-        let product = {};
         for(let i =0; i<amazon.length; i++){
+            let product = {};
             let a = amazon[i];
             let akey = Object.keys(a);
-            product.type = akey;
+            console.log(`Gathering data for ${akey}...`);
+            product.type = akey[0];
             let alink = a[akey];
             let n = newegg[i];
             let nkey = Object.keys(n);
@@ -64,10 +65,49 @@ async function constructPartlist(){
             let neweggPrice = await checkPriceNewegg(nlink);
             product.neweggprice = neweggPrice;
             productList.push(product);
-            console.log(product);
+            //console.log(product);
         }
-        resolve();
+        console.log(productList);
+        resolve(productList);
     });
+}
+
+async function getBestDeals(){
+    let list = await constructPartlist();
+    let bestdeals = [];
+    list.forEach(item => {
+        let product = {};
+        if(item.amazonprice === 'NA'){
+            product.type = item.type;
+            product.title = item.title;
+            product.distributor = 'Newegg';
+            product.price = item.neweggprice;
+            bestdeals.push(product);
+        }
+        else if(item.neweggprice === 'NA'){
+            product.type = item.type;
+            product.title = item.title;
+            product.distributor = 'Amazon';
+            product.price = item.amazonprice;
+            bestdeals.push(product);
+        }
+        else if(item.amazonprice <= item.neweggprice){
+            product.type = item.type;
+            product.title = item.title;
+            product.distributor = 'Amazon';
+            product.price = item.amazonprice;
+            bestdeals.push(product);
+        }
+        else if(item.neweggprice < item.amazonprice){
+            product.type = item.type;
+            product.title = item.title;
+            product.distributor = 'Newegg';
+            product.price = item.neweggprice;
+            bestdeals.push(product);
+        }
+    });
+    console.log(bestdeals);
+    return(bestdeals);
 }
 
 async function getPriceAmazon(link){
@@ -84,7 +124,7 @@ async function getPriceAmazon(link){
     
     await scraper.stopBrowsing();
 
-    console.log('returning text..');
+    //console.log('returning text..');
     return(text);
 }
 
@@ -101,7 +141,7 @@ async function checkPriceNewegg(link){
         text = 'NA';
     }
     
-    console.log('closing browser...');
+    //console.log('closing browser...');
     await scraper.stopBrowsing();
 
     return(text);
@@ -120,11 +160,11 @@ async function getProductTitle(link){
         text = 'NA';
     }
     
-    console.log('closing browser...');
+    //console.log('closing browser...');
     await scraper.stopBrowsing();
 
-    console.log(text);
+    //console.log(text);
     return(text);
 }
 
-constructPartlist();
+getBestDeals();
